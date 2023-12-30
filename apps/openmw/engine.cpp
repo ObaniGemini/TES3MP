@@ -978,7 +978,9 @@ void OMW::Engine::go()
 
         Attempt multiplayer initialization and proceed no further if it fails
     */
-    if (!mwmp::Main::init(mContentFiles, mFileCollections))
+
+    std::string playerName = "";
+    if (!mwmp::Main::init(playerName, mContentFiles, mFileCollections))
         return;
     /*
         End of tes3mp change (major)
@@ -1081,7 +1083,11 @@ void OMW::Engine::go()
     }
     else
     {
-        mEnvironment.getStateManager()->newGame (!mNewGame);
+        if (playerName != "") {
+            mEnvironment.getMechanicsManager()->setPlayerName (playerName);
+        } else {
+            mEnvironment.getStateManager()->newGame (!mNewGame);
+        }
     }
 
     if (!mStartupScript.empty() && mEnvironment.getStateManager()->getState() == MWState::StateManager::State_Running)

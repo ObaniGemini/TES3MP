@@ -194,6 +194,9 @@ namespace MWGui
             switch (id)
             {
                 case GM_Name:
+                    if (mwmp::Main::get().getLocalPlayer()->npc.mName != "")
+                        break;
+
                     MWBase::Environment::get().getWindowManager()->removeDialog(mNameDialog);
                     mNameDialog = nullptr;
                     mNameDialog = new TextInputDialog();
@@ -461,35 +464,23 @@ namespace MWGui
     {
         if (mNameDialog)
         {
-            mPlayerName = mNameDialog->getTextInput();
-
             /*
-                Start of tes3mp change (major)
+                Start of tes3mp change
 
-                Ensure names are not longer than the original game's 31 character maximum
+                abstract the setting of player name in mechanics manager
             */
-            if (mPlayerName.length() > 31)
-                mPlayerName = mPlayerName.substr(0, 31);
+
+            MWBase::Environment::get().getMechanicsManager()->setPlayerName(mNameDialog->getTextInput());
+            
             /*
                 End of tes3mp change (major)
             */
 
-            MWBase::Environment::get().getMechanicsManager()->setPlayerName(mPlayerName);
             MWBase::Environment::get().getWindowManager()->removeDialog(mNameDialog);
             mNameDialog = nullptr;
         }
 
         handleDialogDone(CSE_NameChosen, GM_Race);
-
-        /*
-            Start of tes3mp addition
-
-            Increase the character generation stage tracked for the LocalPlayer
-        */
-        mwmp::Main::get().getLocalPlayer()->charGenState.currentStage++;
-        /*
-            End of tes3mp addition
-        */
     }
 
     void CharacterCreation::selectRace()

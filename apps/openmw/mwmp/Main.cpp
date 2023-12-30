@@ -123,7 +123,7 @@ void Main::configure(const boost::program_options::variables_map &variables)
     resourceDir = variables["resources"].as<Files::EscapePath>().mPath.string();
 }
 
-bool Main::init(std::vector<std::string> &content, Files::Collections &collections)
+bool Main::init(std::string& playerName, std::vector<std::string> &content, Files::Collections &collections)
 {
     assert(!pMain);
     pMain = new Main();
@@ -132,6 +132,7 @@ bool Main::init(std::vector<std::string> &content, Files::Collections &collectio
     loadSettings(manager);
 
     int logLevel = manager.getInt("logLevel", "General");
+    playerName = manager.getString("playerName", "General");
     TimedLog::SetLevel(logLevel);
     if (address.empty())
     {

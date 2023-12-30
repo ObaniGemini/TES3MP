@@ -432,7 +432,30 @@ namespace MWMechanics
 
         ESM::NPC player =
             *world->getPlayerPtr().get<ESM::NPC>()->mBase;
-        player.mName = name;
+        
+        /*
+            Start of tes3mp change (major)
+
+            Ensure names are not longer than the original game's 31 character maximum
+            and
+            Increase the character generation stage tracked for the LocalPlayer
+        */
+        
+        if (name.length() > 31) {
+            player.mName = name.substr(0, 31);
+        } else {
+            player.mName = name;
+        }
+
+        LocalPlayer* player = mwmp::Main::get().getLocalPlayer();
+        player->npc.mName = name;
+        if (player->charGenState.currentStage == 0) {
+            ++player->charGenState.currentStage;
+        }
+
+        /*
+            End of tes3mp addition
+        */
 
         world->createRecord(player);
 
